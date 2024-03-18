@@ -59,10 +59,6 @@ int main() {
 	
 	// queue에 넣은 위치부터 퍼뜨리기
 	while (!myQ.empty()) {
-		checkAllTomatos();
-
-		if (isValid) break;
-
 		int size = myQ.size();
 		day++;
 
@@ -87,8 +83,10 @@ int main() {
 		}
 	}
 
+	checkAllTomatos();
+
 	if (isValid) {
-		cout << day;
+		cout << day - 1;
 	}
 	else {
 		cout << -1;
