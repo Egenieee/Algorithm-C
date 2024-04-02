@@ -1,99 +1,72 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <cstdlib>
-
 using namespace std;
 
-int board[51][51];
-vector<pair<int, int>> housesPos;
-vector<pair<int, int>> chickensPos;
+struct Node { int y, x; };
 
-vector<int> choiceIdx;
+int n, m;
+int map[51][51];
+bool selected[13];
+vector<Node> stores;
+vector<Node> homes;
+vector<Node> picked;
 
-bool isTaken[13];
+int minCityDist = 1e9;
 
-int inputN;
-int inputM;
+void input() {
+	cin >> n >> m;
+	
+	for (int i = 0; i < n; i++) {
+		for (int j = 0; j < n; j++) {
+			cin >> map[i][j];
 
-int minDist;
-
-int getDist(int y1, int x1, int y2, int x2) {
-    return abs(y1 - y2) + abs(x1 - x2);
+			if (map[i][j] == 1) homes.push_back({ i, j });
+			else if (map[i][j] == 2) stores.push_back({ i, j });
+		}
+	}
 }
 
-// 치킨집 중 M개 조합으로 치킨거리 다 구해보고 최소 치킨 거리 리턴
-void solution(int count, int prevChicken) {
-    if (count == inputM) {
-        // 모든 집에서 모든 치킨 집까지 치킨 거리 구하고 가장 가까운 치킨집 찾기
-        // 그러고 그 합으로 minDist 갱신하기
+void findMinDist() {
+	int nowMinDist = 0;
 
-        int sumOfDist = 0;
-
-        for (int i = 0; i < housesPos.size(); i++) {
-            int eachMinDist = 999999999;
-
-            // 모든 치킨 집으로부터 거리 구해보기
-            for (int j = 0; j < choiceIdx.size(); j++) {
-                int chickenY = chickensPos[choiceIdx[j]].first;
-                int chickenX = chickensPos[choiceIdx[j]].second;
-                int houseY = housesPos[i].first;
-                int houseX = housesPos[i].second;
-
-                int dist = getDist(chickenY, chickenX, houseY, houseX);
-                
-                eachMinDist = min(dist, eachMinDist);
-            }
-
-            // 가장 가까운 치킨 거리 정하기
-            sumOfDist += eachMinDist;
-        }
-
-        // cout << "다음과 같이 치킨 집을 뽑았을 때 : ";
-        // for (int i = 0; i < choiceIdx.size(); i++) {
-        //     cout << choiceIdx[i] << " ";
-        // }
-        // cout << "\n최소 치킨 거리는 " << sumOfDist << "입니다\n";
-
-        minDist = min(sumOfDist, minDist);
-
-        return;
-    }
-
-    // 치킨 집 중 inputM만큼 뽑기
-    for (int i = prevChicken; i < chickensPos.size(); i++) {
-        if (!isTaken[i]) {
-            isTaken[i] = true;
-            choiceIdx.push_back(i);
-            solution(count + 1, i + 1);
-            choiceIdx.pop_back();
-            isTaken[i] = false;
-        } 
-    }
+	for (int i = 0; i < homes.size(); i++) {
+		int nowChickDist = 1e9;
+		for (int j = 0; j < m; j++) {
+			nowChickDist = min(nowChickDist, abs(homes[i].y - picked[j].y) + abs(homes[i].x - picked[j].x));
+		}
+		nowMinDist += nowChickDist;
+	}
+	minCityDist = min(minCityDist, nowMinDist);
 }
 
-int main(void) {
-    cin >> inputN >> inputM;
+void dfs(int pick, int now) {
 
-    for (int i = 0; i < inputN; i++) {
-        for (int j = 0; j < inputN; j++) {
-            cin >> board[i][j];
+	if (pick == m) {
+		findMinDist();
+		return;
+	}
 
-            if (board[i][j] == 1) {
-                housesPos.push_back({i, j});
-            }
+	for (int i = now; i < stores.size(); i++) {
+		if (selected[i]) continue;
 
-            if (board[i][j] == 2) {
-                chickensPos.push_back({i, j});
-            }
-        }
-    }
+		selected[i] = true;
+		picked.push_back(stores[i]);
+		dfs(pick + 1, i);
+		selected[i] = false;
+		picked.pop_back();
+	}
+}
 
-    minDist = 999999999;
+int main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	cout.tie(0);
 
-    solution(0, 0);
+	input();
 
-    cout << minDist << "\n";
+	// 치킨집 중 m개 고르기 (조합)
+	dfs(0, 0);
 
-    return 0;
+	cout << minCityDist;
 }
