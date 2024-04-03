@@ -7,23 +7,27 @@ int main() {
 	cin.tie(0);
 	cout.tie(0);
 
-	int movieName = 666;
-	int cnt = 0;
-
 	int n;
 	cin >> n;
 
-	while (1) {
-		string strName = to_string(movieName);
-		if (strName.find("666") != string::npos) {
-			cnt++;
-		}
+	int movieName = 666;
+	int cnt = 1;
 
-		if (cnt == n) {
-			cout << movieName << "\n";
-			return 0;
-		}
+	int temp = 0;
 
+	while (cnt != n) {
 		movieName++;
+		temp = movieName;
+
+		// 영화제목에 6이 3개 이상 들어가는지 확인
+		while (temp != 0) {
+			// 뒤에서부터 세자리가 666이면 영화 개수 + 1
+			if (temp % 1000 == 666) {
+				cnt++;
+				break;
+			}
+			else temp /= 10;  // 일의 자리수 삭제
+		}
 	}
+	cout << movieName;
 }
