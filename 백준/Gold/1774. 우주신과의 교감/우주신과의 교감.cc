@@ -83,18 +83,12 @@ int main() {
 	double price = 0.0;
 	int targetCnt = inputN - 1;
 	int curCnt = 0;
-
-    sort(paths.begin(), paths.end(), compare);
 	
 	// 이미 연결된 번호 입력 받아서 바로 setUnion하기
 	for (int i = 0; i < inputM; i++) {
 		int one, two;
-        int a, b;
 
-		cin >> a >> b;
-
-        one = a;
-        two = b;
+		cin >> one >> two;
 
 		if (find(one) == find(two)) continue;
 
@@ -103,6 +97,8 @@ int main() {
 
 		if (curCnt == targetCnt) break;
 	}
+
+    sort(paths.begin(), paths.end(), compare);
 
 	// 연결 안된 애들 최소 비용으로 연결하기
 	for (int i = 0; i < paths.size(); i++) {
