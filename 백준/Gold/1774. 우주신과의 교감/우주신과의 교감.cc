@@ -93,8 +93,8 @@ int main() {
 
 		cin >> a >> b;
 
-        one = max(a, b);
-        two = min(a, b);
+        one = a;
+        two = b;
 
 		if (find(one) == find(two)) continue;
 
@@ -108,8 +108,8 @@ int main() {
 	for (int i = 0; i < paths.size(); i++) {
 		if (curCnt == targetCnt) break;
 
-		int one = max(paths[i].from, paths[i].to);
-		int two = min(paths[i].from, paths[i].to);
+		int one = paths[i].from;
+		int two = paths[i].to;
 		double dist = paths[i].dist;
 
 		if (find(one) == find(two)) continue;
