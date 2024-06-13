@@ -19,19 +19,8 @@ int board[1001][1001];
 
 int found;
 
-queue<pair<int, int>> fireQ;
-queue<pair<int, int>> sgQ;
-
 void init() {
     found = 0;
-
-    while(!fireQ.empty()) {
-        fireQ.pop();
-    }
-
-    while(!sgQ.empty()) {
-        sgQ.pop();
-    }
 
     for (int i = 0; i < inputN; i++) {
         for (int j = 0; j < inputM; j++) {
@@ -43,6 +32,10 @@ void init() {
 }
 
 int main() {
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    
     int T;
     cin >> T;
 
@@ -50,6 +43,9 @@ int main() {
         cin >> inputM >> inputN;
 
         init();
+
+        queue<pair<int, int>> fireQ;
+        queue<pair<int, int>> sgQ;
 
         for (int i = 0; i < inputN; i++) {
             string oneLine;
