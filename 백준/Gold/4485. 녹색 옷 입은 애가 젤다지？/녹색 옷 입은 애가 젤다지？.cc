@@ -1,71 +1,85 @@
 #include <iostream>
+#include <algorithm>
 #include <queue>
+#include <string>
+
 using namespace std;
 
-struct Node {
-	int y, x, thief;
-	
-	bool operator<(Node right) const {
-		return thief > right.thief;
-	}
+int dy[4] = {0, 0, 1, -1};
+int dx[4] = {1, -1, 0, 0};
+
+struct pos {
+    int y;
+    int x;
+    int cost;
 };
 
-int n;
-int map[126][126];
-int dir[4][2] = { -1, 0, 1, 0, 0, -1, 0, 1 };
+struct compare {
+    bool operator()(pos one, pos two) {
+        return one.cost > two.cost;
+    }
+};
 
-int dijkstra(int n) {
-	priority_queue<Node> pq;
+int inputN;
+int dist[150][150];
+int board[150][150];
 
-	int dist[126][126] = { 0 };
-	for (int i = 0; i < n; i++) {
-		for (int j = 0; j < n; j++) {
-			dist[i][j] = 1e9;
-		}
-	}
+void init() {
+    for (int i = 0; i < inputN; i++) {
+        for (int j = 0; j < inputN; j++) {
+            dist[i][j] = INT32_MAX;
+        }
+    }
+}
 
-	dist[0][0] = map[0][0];
-	pq.push({ 0, 0, map[0][0] });
+void dijkstra() {
+    priority_queue<pos, vector<pos>, compare> myQ;
 
-	while (!pq.empty()) {
-		Node now = pq.top();
-		pq.pop();
+    init();
+    dist[0][0] = board[0][0];
+    myQ.push({0, 0, dist[0][0]});
 
-		for (int i = 0; i < 4; i++) {
-			int ny = now.y + dir[i][0];
-			int nx = now.x + dir[i][1];
+    while(!myQ.empty()) {
+        int curY = myQ.top().y;
+        int curX = myQ.top().x;
+        int curCost = myQ.top().cost;
+        myQ.pop();
 
-			if (ny < 0 || ny >= n || nx < 0 || nx >= n) continue;
+        if (dist[curY][curX] < curCost) continue;
 
-			int nextThief = now.thief + map[ny][nx];
-			if (nextThief >= dist[ny][nx]) continue;
+        for (int dir = 0; dir < 4; dir++) {
+            int ny = curY + dy[dir];
+            int nx = curX + dx[dir];
+            int nCost = board[ny][nx];
 
-			dist[ny][nx] = nextThief;
-			pq.push({ ny, nx, nextThief });
-		}
-	}
+            if (ny < 0 || ny >= inputN || nx < 0 || nx >= inputN) continue;
 
-	return dist[n - 1][n - 1];
+            if (dist[ny][nx] > dist[curY][curX] + nCost) {
+                dist[ny][nx] = dist[curY][curX] + nCost;
+                myQ.push({ny, nx, dist[ny][nx]});
+            }
+        }
+    }
 }
 
 int main() {
-	ios_base::sync_with_stdio(false);
-	cin.tie(0);
-	cout.tie(0);
+    int testCase = 1;
 
-	int turn = 0;
-	while (1) {
-		++turn;
-		cin >> n;
-		if (n == 0) break;
+    while(true) {
+        cin >> inputN;
 
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < n; j++) {
-				cin >> map[i][j];
-			}
-		}
+        if (inputN == 0) break;
 
-		cout << "Problem " << turn << ": " << dijkstra(n) << "\n";
-	}
+        for (int i = 0; i < inputN; i++) {
+            for (int j = 0; j < inputN; j++) {
+                cin >> board[i][j];
+            }
+        }
 
+        dijkstra();
+
+        cout << "Problem " << testCase++ << ": " << dist[inputN - 1][inputN - 1] << "\n";
+    }
+
+    return 0;
 }
